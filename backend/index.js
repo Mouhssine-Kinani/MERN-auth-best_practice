@@ -1,0 +1,38 @@
+// envirement variable
+import dotenv from "dotenv";
+dotenv.config();
+// server 
+import express from "express";
+// connection to mongodb db
+import { connectDB } from "./db/connectDB.js";
+// auth
+import authRoutes from "./routes/auth.route.js";
+import cors from "cors";
+
+
+const app = express();
+//the port
+const PORT = process.env.BACK_END_PORT ||5000;
+// app.use(cors({
+//   origin: "http://localhost:3000", // Replace with your frontend URL
+//   credentials: true
+// }));
+app.use(cors());
+// to be able to deal with json
+app.use(express.json());
+// routes
+app.use('/api/auth',authRoutes)
+//listen
+app.listen(PORT, async () => {
+  try {
+    await connectDB(); 
+    console.log(`DB connected, server running at http://localhost:${PORT}`);
+  } catch (err) {
+    console.error('DB connection failed', err);
+  }
+});
+
+
+//HhVWuB22lfLpO4RT
+
+// mongodb+srv://kinanimouhssine:HhVWuB22lfLpO4RT@cluster0.75n6tg1.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0
