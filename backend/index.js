@@ -33,8 +33,3 @@ app.listen(PORT, async () => {
     console.error('DB connection failed', err);
   }
 });
-
-
-//HhVWuB22lfLpO4RT
-
-// mongodb+srv://kinanimouhssine:HhVWuB22lfLpO4RT@cluster0.75n6tg1.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0
