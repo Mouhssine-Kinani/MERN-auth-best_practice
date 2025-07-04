@@ -1,12 +1,16 @@
+import { useEffect } from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
-import FloatingShape from "./components/floatingShape";
+import { Toaster } from "react-hot-toast";
+
 import SignUpPage from "./pages/SignUpPage";
 import LoginPage from "./pages/LoginPage";
 import EmailVerificationPage from "./pages/EmailVerificationPage";
-import { Toaster } from "react-hot-toast";
-import { useAuthStore } from "./store/authStore";
-import { useEffect } from "react";
 import DashboardPage from "./pages/DashboardPage";
+
+import { useAuthStore } from "./store/authStore";
+
+import FloatingShape from "./components/floatingShape";
+import LoadingSpinner from "./components/LoadingSpinner";
 
 const RedirectAuthenticatedUser = ({ children }) => {
   const { isAuthenticated, user } = useAuthStore();
@@ -32,8 +36,7 @@ function App() {
   useEffect(() => {
     checkAuth();
   }, [checkAuth]);
-  console.log("is Auth", isAuthenticated);
-  console.log("user", user);
+  if(isCheckingAuth) return <LoadingSpinner/>;
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-green-900 to-emerald-900 flex items-center justify-center relative overflow-hidden">
       <FloatingShape

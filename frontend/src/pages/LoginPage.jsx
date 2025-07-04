@@ -3,13 +3,23 @@ import { motion } from "framer-motion";
 import { Mail, Lock, Loader } from "lucide-react";
 import { Link } from "react-router-dom";
 import Input from "../components/Input"; // Adjust the path if needed
+import { useAuthStore } from "../store/authStore";
+import toast from "react-hot-toast";
 function LoginPage() {
     // state for form inputs
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const isLoading = false;
-  const handleLogin = (e) => {
+  const { isLoading, error, login} = useAuthStore();
+  
+  const handleLogin = async (e) => {
     e.preventDefault();
+    try {
+      await login(email, password)
+      toast.success( "logged in successfully" ) // message from back end 
+    } catch (error) {
+      toast.error(error.response?.data?.message || "Login failed");
+      console.error("Login failed: ", error);
+    }
   };
   return (
     <motion.div
@@ -46,7 +56,7 @@ function LoginPage() {
               Forgot password?
             </Link>
           </div>
-
+          {error && <p className="text-red-500 font-semibold mb-2">{error}</p>}
           <motion.button
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}

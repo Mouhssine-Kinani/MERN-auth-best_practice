@@ -5,6 +5,7 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import PasswordStrenghMeter from "../components/PasswordStrenghMeter";
 import { useAuthStore } from "../store/authStore";
+import toast from "react-hot-toast";
 function SignUpPage() {
   // State variables for form inputs
   const [name, setName] = useState("");
@@ -22,7 +23,8 @@ function SignUpPage() {
       await signup(email, password, name);
       navigate("/verify-email");
     } catch (error) {
-      
+      console.error("Signup failed: ", error);
+      toast.error(error.response?.data?.message || "Signup failed");
     }
   };
   return (
