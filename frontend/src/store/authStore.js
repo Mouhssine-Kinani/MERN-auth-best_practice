@@ -9,6 +9,7 @@ export const useAuthStore = create((set) => ({
   error: null,
   isLoading: false,
   isCheckingAuth: true,
+  message: null,
   signup: async (email, password, name) => {
     set({ isLoading: true, error: null });
     try {
@@ -30,39 +31,44 @@ export const useAuthStore = create((set) => ({
       throw error;
     }
   },
-  login : async (email, password) => {
-    set({ isLoading: true, error: null});
+  login: async (email, password) => {
+    set({ isLoading: true, error: null });
     try {
-      const res = await axios.post(`${API_AUTH_URL}/login`,{
+      const res = await axios.post(`${API_AUTH_URL}/login`, {
         email,
-        password
-      })
+        password,
+      });
       set({
         user: res.data.user,
         isAuthenticated: true,
         isLoading: false,
-        error: null
-      })
-      return res.data ;
+        error: null,
+      });
+      return res.data;
     } catch (error) {
       set({
         error: error.res?.data?.message || "Login failed",
         isLoading: false,
-        isAuthenticated: false
+        isAuthenticated: false,
       });
       throw error;
     }
   },
   logout: async () => {
-		set({ isLoading: true, error: null });
-		try {
-			await axios.post(`${API_AUTH_URL}/logout`);
-			set({ user: null, isAuthenticated: false, error: null, isLoading: false });
-		} catch (error) {
-			set({ error: "Error logging out", isLoading: false });
-			throw error;
-		}
-	},
+    set({ isLoading: true, error: null });
+    try {
+      await axios.post(`${API_AUTH_URL}/logout`);
+      set({
+        user: null,
+        isAuthenticated: false,
+        error: null,
+        isLoading: false,
+      });
+    } catch (error) {
+      set({ error: "Error logging out", isLoading: false });
+      throw error;
+    }
+  },
   verifyEmail: async (verificationCode) => {
     set({ isLoading: true, error: null });
     try {
@@ -83,22 +89,63 @@ export const useAuthStore = create((set) => ({
       throw error;
     }
   },
-  checkAuth: async()=>{
+  checkAuth: async () => {
     //await new Promise((resolve) => setTimeout(resolve, 1000)); // Simulate a delay
     try {
       const res = await axios.get(`${API_AUTH_URL}/check-auth`);
       set({
         user: res.data.user || null,
         isAuthenticated: !!res.data.user,
-        isCheckingAuth: false
-      })
+        isCheckingAuth: false,
+      });
     } catch (error) {
       set({
         error: null,
         isCheckingAuth: false,
-        isAuthenticated: false
-      })
+        isAuthenticated: false,
+      });
       console.error("Error checking authentication: ", error.message);
+    }
+  },
+  forgotPassword: async (email) => {
+    set({ isLoading: true, error: null });
+    try {
+      const response = await axios.post(`${API_AUTH_URL}/forgot-password`, {
+        email,
+      });
+      set({
+        message: response.data.message || "Password reset link sent",
+        user: null,
+        isAuthenticated: false,
+        isLoading: false,
+        error: null,
+      });
+    } catch (error) {
+      set({
+        error: error.response?.data?.message || "Forgot password failed",
+        isLoading: false,
+      });
+      throw error;
+    }
+  },
+  resetPassword: async (resetToken, newPassword)=>{
+    set({ isLoading: true, error: null });
+    try {
+      const response = await axios.post(`${API_AUTH_URL}/reset-password/${resetToken}`,{
+        password: newPassword
+      });
+      set({
+        message: response.data.message || "Password reset successful",
+        user: null,
+        isAuthenticated: false,
+        isLoading: false
+      })
+    } catch (error) {
+      set({
+        error: error.response?.data?.message || "Reset password failed",
+        isLoading: false,
+      });
+      throw error;
     }
   }
 }));
